@@ -1,0 +1,6 @@
+{
+  "name": "TerraWatch AI",
+  "description": "Real-Time Climate & Seismic Intelligence Platform including interactive maps, advanced weather forecasts, severe storm tracking, and global earthquake analytics.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
