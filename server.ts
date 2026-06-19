@@ -1024,7 +1024,12 @@ async function startServer() {
 
   // Hook express routes up top, listen
   server.listen(PORT, '0.0.0.0', () => {
-    console.log(`TerraWatch AI full-stack container active on http://0.0.0.0:${PORT}`);
+    console.log(`========================================================================`);
+    console.log(`🌍 TerraWatch AI Full-Stack Platform Active!`);
+    console.log(`👉 Local Access (Recommended): http://localhost:${PORT}`);
+    console.log(`👉 Loopback Access          : http://127.0.0.1:${PORT}`);
+    console.log(`👉 Container Network Bind   : http://0.0.0.0:${PORT}`);
+    console.log(`========================================================================`);
   });
 }
 
