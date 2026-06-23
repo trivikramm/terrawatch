@@ -19,7 +19,8 @@ import {
   User,
   ShieldAlert,
   Bell,
-  Plane
+  Plane,
+  Layers
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -109,6 +110,7 @@ export default function Sidebar({
     { id: 'alerts', label: 'Warden Alerts', icon: Bell, count: 0 },
     { id: 'seismic', label: 'Seismic Tectonics', icon: Activity, count: eqCount },
     { id: 'meteo', label: 'Meteorological Lab', icon: Sun, count: 0 },
+    { id: 'satellite', label: 'AlphaEarth Geospatial', icon: Layers, count: 0, highlighted: true },
     { id: 'airspace', label: 'Aero & Incident Watch', icon: Plane, count: 0, highlighted: true },
     { id: 'supplyChain', label: 'Crisis Logistics Hub', icon: Truck, count: cargoCount },
     { id: 'chat', label: 'Op Intelligence Liaison', icon: Bot, count: 0, highlighted: true },

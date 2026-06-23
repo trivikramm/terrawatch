@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { db } from './index.ts';
-import { users, chats, weatherSnapshots, seismicLogs, warehouses, supplyCargo, alerts } from './schema.ts';
+import { users, chats, weatherSnapshots, seismicLogs, warehouses, supplyCargo, alerts, satelliteEmbeddings } from './schema.ts';
 import { eq, desc, and } from 'drizzle-orm';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'terrawatch_secure_federated_node_jwt_secret_99884';
@@ -492,4 +492,94 @@ export async function getAlerts(limit = 40) {
     return [];
   }
 }
+
+// ---------------------------------------------------------
+// SATELLITE EMBEDDINGS (ALPHAEARTH FOUNDATIONS)
+// ---------------------------------------------------------
+export async function storeSatelliteEmbedding(
+  lat: number,
+  lon: number,
+  year: number,
+  embedding: number[]
+) {
+  try {
+    // Keep coordinates trimmed to 4 decimal places to unify location queries easily
+    const targetLat = Math.round(lat * 10000) / 10000;
+    const targetLon = Math.round(lon * 10000) / 10000;
+
+    // Check if we already have it to avoid duplicate rows for the same year & location
+    const existing = await db
+      .select()
+      .from(satelliteEmbeddings)
+      .where(
+        and(
+          eq(satelliteEmbeddings.lat, targetLat),
+          eq(satelliteEmbeddings.lon, targetLon),
+          eq(satelliteEmbeddings.year, year)
+        )
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      await db
+        .update(satelliteEmbeddings)
+        .set({
+          embedding: JSON.stringify(embedding),
+        })
+        .where(
+          and(
+            eq(satelliteEmbeddings.lat, targetLat),
+            eq(satelliteEmbeddings.lon, targetLon),
+            eq(satelliteEmbeddings.year, year)
+          )
+        );
+      return true;
+    }
+
+    await db.insert(satelliteEmbeddings).values({
+      lat: targetLat,
+      lon: targetLon,
+      year,
+      embedding: JSON.stringify(embedding),
+    });
+    return true;
+  } catch (error) {
+    console.error('Store satellite embedding failed:', error);
+    return false;
+  }
+}
+
+export async function getSatelliteEmbeddings(lat: number, lon: number, limit = 10) {
+  try {
+    const targetLat = Math.round(lat * 10000) / 10000;
+    const targetLon = Math.round(lon * 10000) / 10000;
+
+    // Direct search matching coordinates
+    const list = await db
+      .select()
+      .from(satelliteEmbeddings)
+      .where(
+        and(
+          eq(satelliteEmbeddings.lat, targetLat),
+          eq(satelliteEmbeddings.lon, targetLon)
+        )
+      )
+      .orderBy(desc(satelliteEmbeddings.year))
+      .limit(limit);
+
+    if (list.length > 0) {
+      return list.map(item => ({
+        ...item,
+        embedding: JSON.parse(item.embedding) as number[],
+      }));
+    }
+
+    // Try a close coordinate box (within 0.05 degrees) if exact match not found
+    return [];
+  } catch (error) {
+    console.error('Get satellite embeddings failed:', error);
+    return [];
+  }
+}
+
 

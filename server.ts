@@ -30,8 +30,43 @@ import { handleRegister, handleLogin } from './src/controllers/authController.ts
 import { handleGetWeather, handleGetEarthquakes, handleSearchCities, handleGetAlerts } from './src/controllers/telemetryController.ts';
 import { handleGetWarehouses, handleGetCargo, handleDispatch, handleSimulateHazard } from './src/controllers/logisticsController.ts';
 import { handleChatMessage } from './src/controllers/chatController.ts';
+import { handleGetSatelliteEmbedding, handleGetEmbeddingHistory, handleCompareEmbeddings } from './src/controllers/geospatialController.ts';
+import ee from '@google/earthengine';
 
 dotenv.config();
+
+// Safely initialize Earth Engine in container context if environment has credentials configured
+async function initializeEarthEngine() {
+  try {
+    // If the developer credentials or service account is configured via environment, try initialization
+    if (process.env.EE_SERVICE_ACCOUNT && process.env.EE_PRIVATE_KEY) {
+      console.log('📡 Attempting Google Earth Engine authentication via service account token...');
+      const privateKey = JSON.parse(process.env.EE_PRIVATE_KEY);
+      ee.data.authenticateViaPrivateKey(
+        privateKey,
+        () => {
+          ee.initialize(
+            null,
+            null,
+            () => {
+              console.log('✅ Google Earth Engine successfully initialized!');
+              (global as any).ee = ee;
+            },
+            (err: any) => console.error('❌ GEE initialization callback error:', err)
+          );
+        },
+        (err: any) => console.error('❌ GEE authentication callback error:', err)
+      );
+    } else {
+      console.log('ℹ️ GEE credentials not detected in .env. Interactive Foundations local simulator is ACTIVE.');
+      (global as any).ee = ee; // Make it available for simulated geometry reduction API
+    }
+  } catch (err) {
+    console.warn('❌ Failed during Earth Engine initial pass:', err);
+  }
+}
+initializeEarthEngine();
+
 
 const app = express();
 const server = http.createServer(app);
@@ -1002,6 +1037,14 @@ app.get('/api/federation/metrics', (req, res) => {
   };
   return res.json(metrics);
 });
+
+
+// ---------------------------------------------------------
+// ALPHAEARTH FOUNDATIONS GEOSPATIAL INTELLIGENCE
+// ---------------------------------------------------------
+app.get('/api/satellite-embedding', handleGetSatelliteEmbedding);
+app.get('/api/compare-embeddings', handleCompareEmbeddings);
+app.get('/api/satellite-embedding/history', handleGetEmbeddingHistory);
 
 
 // ---------------------------------------------------------

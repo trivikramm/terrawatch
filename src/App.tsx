@@ -48,6 +48,7 @@ import DisasterLogistics from './components/DisasterLogistics';
 import CognitiveChat from './components/CognitiveChat';
 import FederationStatus from './components/FederationStatus';
 import OperatorTerminal from './components/OperatorTerminal';
+import SatelliteEmbeddingViewer from './components/SatelliteEmbeddingViewer';
 import WardenAlerts from './components/WardenAlerts';
 import AviationIncidentRadar from './components/AviationIncidentRadar';
 
@@ -985,6 +986,19 @@ export default function App() {
                   </div>
 
                 </div>
+              </motion.div>
+            )}
+
+            {/* 3.25) ALPHAEARTH SATELLITE EMBEDDING TAB */}
+            {activeTab === 'satellite' && (
+              <motion.div 
+                key="satellite-view"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <SatelliteEmbeddingViewer />
               </motion.div>
             )}
 

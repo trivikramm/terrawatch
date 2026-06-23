@@ -81,6 +81,16 @@ export const alerts = pgTable('alerts', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
+// Satellite Embeddings table to store AlphaEarth Foundations multi-dimensional land cover telemetry
+export const satelliteEmbeddings = pgTable('satellite_embeddings', {
+  id: serial('id').primaryKey(),
+  lat: doublePrecision('lat').notNull(),
+  lon: doublePrecision('lon').notNull(),
+  year: integer('year').notNull(), // e.g., 2023, 2021, etc.
+  embedding: text('embedding').notNull(), // JSON string representing the 64D vector
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
   chats: many(chats),
