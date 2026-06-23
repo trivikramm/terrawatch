@@ -69,6 +69,7 @@ export default function EarthquakeMap({
       script = document.createElement('script');
       script.id = scriptId;
       script.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet.heat/0.2.0/leaflet-heat.js';
+      script.crossOrigin = 'anonymous';
       script.async = true;
       script.onload = () => {
         setHeatScriptLoaded(true);

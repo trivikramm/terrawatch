@@ -57,7 +57,8 @@ export default function CognitiveChat({ token, userName = 'Operator', focalCity 
   }, []);
 
   useEffect(() => {
-    if (!chatMapRef.current) return;
+    const container = chatMapRef.current;
+    if (!container) return;
 
     let lat = 8.5241;
     let lon = 76.9366;
@@ -71,8 +72,25 @@ export default function CognitiveChat({ token, userName = 'Operator', focalCity 
       lat = 35.6762; lon = 139.6503;
     }
 
-    if (!chatMapInstanceRef.current) {
-      const map = L.map(chatMapRef.current, {
+    if (chatMapInstanceRef.current) {
+      try {
+        chatMapInstanceRef.current.remove();
+      } catch (err) {
+        console.error('Failed to remove chat map instance:', err);
+      }
+      chatMapInstanceRef.current = null;
+    }
+
+    if ((container as any)._leaflet_id) {
+      delete (container as any)._leaflet_id;
+    }
+    container.innerHTML = '';
+
+    let marker: L.CircleMarker | null = null;
+    let pulse: any = null;
+
+    try {
+      const map = L.map(container, {
         center: [lat, lon],
         zoom: 6,
         attributionControl: false
@@ -83,51 +101,54 @@ export default function CognitiveChat({ token, userName = 'Operator', focalCity 
       }).addTo(map);
 
       chatMapInstanceRef.current = map;
-    } else {
-      chatMapInstanceRef.current.setView([lat, lon], 6, { animate: true });
+
+      marker = L.circleMarker([lat, lon], {
+        radius: 12,
+        fillColor: '#06b6d4',
+        color: '#06b6d4',
+        weight: 2,
+        opacity: 0.9,
+        fillOpacity: 0.35
+      }).addTo(map);
+
+      let val = 1;
+      pulse = setInterval(() => {
+        if (!marker || !map.hasLayer(marker)) {
+          clearInterval(pulse);
+          return;
+        }
+        const radius = marker.getRadius();
+        let nextR = radius + val * 0.5;
+        if (nextR > 18) val = -1;
+        if (nextR < 10) val = 1;
+        marker.setRadius(nextR);
+      }, 150);
+
+      marker.bindPopup(`
+        <div style="font-family:sans-serif;font-size:11px;color:#1e293b;padding:2px;">
+          <b style="color:#06b6d4;text-transform:uppercase;">CHAT FOCUS: ${focalCity}</b>
+          <p style="margin:4px 0 0;font-weight:600;margin-bottom:0;">Liaison Context Station Coords online.</p>
+        </div>
+      `, { closeButton: false }).openPopup();
+
+      chatMarkerRef.current = marker;
+    } catch (err) {
+      console.error('Failed to initialize chat focus map:', err);
     }
-
-    const map = chatMapInstanceRef.current;
-
-    if (chatMarkerRef.current) {
-      chatMarkerRef.current.remove();
-    }
-
-    const marker = L.circleMarker([lat, lon], {
-      radius: 12,
-      fillColor: '#06b6d4',
-      color: '#06b6d4',
-      weight: 2,
-      opacity: 0.9,
-      fillOpacity: 0.35
-    }).addTo(map);
-
-    let val = 1;
-    const pulse = setInterval(() => {
-      if (!marker || !map.hasLayer(marker)) {
-        clearInterval(pulse);
-        return;
-      }
-      const radius = marker.getRadius();
-      let nextR = radius + val * 0.5;
-      if (nextR > 18) val = -1;
-      if (nextR < 10) val = 1;
-      marker.setRadius(nextR);
-    }, 150);
-
-    marker.bindPopup(`
-      <div style="font-family:sans-serif;font-size:11px;color:#1e293b;padding:2px;">
-        <b style="color:#06b6d4;text-transform:uppercase;">CHAT FOCUS: ${focalCity}</b>
-        <p style="margin:4px 0 0;font-weight:600;margin-bottom:0;">Liaison Context Station Coords online.</p>
-      </div>
-    `, { closeButton: false }).openPopup();
-
-    chatMarkerRef.current = marker;
 
     return () => {
-      clearInterval(pulse);
+      if (pulse) {
+        clearInterval(pulse);
+      }
+      if (chatMapInstanceRef.current) {
+        try {
+          chatMapInstanceRef.current.remove();
+        } catch (err) {
+          console.error('Failed to clean up chat map:', err);
+        }
+        chatMapInstanceRef.current = null;
+      }
     };
-
   }, [focalCity]);
 
   // Suggested quick prompts to guide operators
