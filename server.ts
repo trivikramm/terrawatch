@@ -30,7 +30,7 @@ import { handleRegister, handleLogin } from './src/controllers/authController.ts
 import { handleGetWeather, handleGetEarthquakes, handleSearchCities, handleGetAlerts } from './src/controllers/telemetryController.ts';
 import { handleGetWarehouses, handleGetCargo, handleDispatch, handleSimulateHazard } from './src/controllers/logisticsController.ts';
 import { handleChatMessage } from './src/controllers/chatController.ts';
-import { handleGetSatelliteEmbedding, handleGetEmbeddingHistory, handleCompareEmbeddings } from './src/controllers/geospatialController.ts';
+import { handleGetSatelliteEmbedding, handleGetEmbeddingHistory, handleCompareEmbeddings, handleGetChangeHotspots, handleExportHotspotsCSV } from './src/controllers/geospatialController.ts';
 import ee from '@google/earthengine';
 
 dotenv.config();
@@ -1044,6 +1044,8 @@ app.get('/api/federation/metrics', (req, res) => {
 // ---------------------------------------------------------
 app.get('/api/satellite-embedding', handleGetSatelliteEmbedding);
 app.get('/api/compare-embeddings', handleCompareEmbeddings);
+app.get('/api/compare-embeddings/hotspots', handleGetChangeHotspots);
+app.get('/api/compare-embeddings/hotspots/export', handleExportHotspotsCSV);
 app.get('/api/satellite-embedding/history', handleGetEmbeddingHistory);
 
 

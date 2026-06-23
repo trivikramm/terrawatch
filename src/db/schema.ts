@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, doublePrecision, integer } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, timestamp, doublePrecision, integer, index } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 // Users table (UID is Firebase UID)
@@ -89,6 +89,12 @@ export const satelliteEmbeddings = pgTable('satellite_embeddings', {
   year: integer('year').notNull(), // e.g., 2023, 2021, etc.
   embedding: text('embedding').notNull(), // JSON string representing the 64D vector
   createdAt: timestamp('created_at').defaultNow(),
+}, (table) => {
+  return {
+    latLonIdx: index('idx_satellite_embeddings_lat_lon').on(table.lat, table.lon),
+    yearIdx: index('idx_satellite_embeddings_year').on(table.year),
+    latLonYearIdx: index('idx_satellite_embeddings_lat_lon_year').on(table.lat, table.lon, table.year),
+  };
 });
 
 // Relations

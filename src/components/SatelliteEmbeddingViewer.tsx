@@ -25,6 +25,33 @@ import {
   Bar,
   ReferenceLine
 } from 'recharts';
+import SatelliteEmbeddingHeatmap from './SatelliteEmbeddingHeatmap';
+import ChangeHotspotsWidget from './ChangeHotspotsWidget';
+
+// Local generator for deterministic preset overlay coordinates in complete synchrony with backend formula
+const generateLocalEmbedding = (lat: number, lon: number, year: number): number[] => {
+  const vector: number[] = [];
+  const seed = Math.sin(lat * 12.9898 + lon * 78.233 + year * 0.137) * 43758.5453;
+  const distToEquator = Math.abs(lat) / 90;
+  for (let i = 0; i < 64; i++) {
+    const noise = Math.sin(seed + i * 2.3) * 0.5 + 0.5;
+    let baseValue = 0.1;
+    if (i < 16) {
+      baseValue = Math.max(0, 0.8 * Math.cos(lat * 0.05) * (1 - distToEquator) - (year - 2020) * 0.015);
+    } else if (i >= 16 && i < 32) {
+      const urbanHubFactor = (Math.sin(lat * 10) * Math.sin(lon * 10) > 0.3) ? 0.7 : 0.1;
+      baseValue = urbanHubFactor + (year - 2020) * 0.024;
+    } else if (i >= 32 && i < 48) {
+      const isCoast = Math.abs(Math.sin(lon * 5) * Math.cos(lat * 5)) < 0.2 ? 0.8 : 0.05;
+      baseValue = isCoast;
+    } else {
+      baseValue = Math.max(0, 0.4 * distToEquator + noise * 0.2);
+    }
+    const finalVal = Math.min(1.0, Math.max(0.0, baseValue * 0.7 + noise * 0.3));
+    vector.push(Number(finalVal.toFixed(4)));
+  }
+  return vector;
+};
 
 interface EmbeddingData {
   lat: number;
@@ -59,6 +86,11 @@ export default function SatelliteEmbeddingViewer() {
   const [history, setHistory] = useState<HistoricalData[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // New map overlays states (Heatmap & Hotspots)
+  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [heatmapColorScale, setHeatmapColorScale] = useState<'forest' | 'urban' | 'water' | 'barren'>('forest');
+  const [mapObject, setMapObject] = useState<L.Map | null>(null);
 
   // Map elements
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -172,6 +204,7 @@ export default function SatelliteEmbeddingViewer() {
       }).addTo(map);
 
       mapInstanceRef.current = map;
+      setMapObject(map);
 
       // Add elegant circle overlay representing AlphaEarth scan coverage radius
       const circle = L.circle([latVal, lonVal], {
@@ -201,6 +234,7 @@ export default function SatelliteEmbeddingViewer() {
     }
 
     return () => {
+      setMapObject(null);
       if (mapInstanceRef.current) {
         try {
           mapInstanceRef.current.remove();
@@ -476,8 +510,51 @@ export default function SatelliteEmbeddingViewer() {
                 10m Resol.
               </span>
             </div>
+            {/* Heatmap Layer Controls */}
+            <div className="p-2.5 bg-slate-950/40 border-b border-slate-800/40 flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-xs">
+              <label className="flex items-center gap-1.5 cursor-pointer select-none font-bold text-slate-350">
+                <input
+                  type="checkbox"
+                  checked={showHeatmap}
+                  onChange={(e) => setShowHeatmap(e.target.checked)}
+                  className="rounded bg-slate-900 border-slate-800 text-cyan-500 focus:ring-0 cursor-pointer h-3.5 w-3.5"
+                />
+                Calibration Nodes Heatmap
+              </label>
+              {showHeatmap && (
+                <div className="flex items-center gap-0.5 bg-slate-950 p-0.5 rounded-lg border border-slate-850">
+                  {(['forest', 'urban', 'water', 'barren'] as const).map((scale) => (
+                    <button
+                      key={scale}
+                      onClick={() => setHeatmapColorScale(scale)}
+                      className={`px-1.5 py-0.5 rounded text-[8px] font-sans font-extrabold uppercase transition-all whitespace-nowrap cursor-pointer ${
+                        heatmapColorScale === scale
+                          ? 'bg-cyan-500 text-slate-950 font-black'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      {scale}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {/* Map Element */}
-            <div ref={mapContainerRef} className="w-full flex-grow relative bg-slate-950" style={{ minHeight: '220px' }} />
+            <div ref={mapContainerRef} className="w-full flex-grow relative bg-slate-950" style={{ minHeight: '220px' }}>
+              {showHeatmap && mapObject && (
+                <SatelliteEmbeddingHeatmap
+                  embeddings={PRESET_STATIONS.map((st) => ({
+                    lat: st.lat,
+                    lon: st.lon,
+                    embedding: generateLocalEmbedding(st.lat, st.lon, selectedYear),
+                    year: selectedYear,
+                  }))}
+                  mapInstance={mapObject}
+                  colorScale={heatmapColorScale}
+                />
+              )}
+            </div>
           </div>
 
           {/* Core Categories Bar Chart */}
@@ -577,6 +654,9 @@ export default function SatelliteEmbeddingViewer() {
             <div className="text-center py-10 text-slate-600 italic">Please select geo target coordinates.</div>
           )}
         </div>
+
+        {/* Change Hotspots Ranking Analysis Widget */}
+        <ChangeHotspotsWidget />
 
         {/* Change Over Time Trend Line Chart - Euclidean Divergence */}
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 shadow-xl">
