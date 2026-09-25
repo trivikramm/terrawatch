@@ -434,7 +434,7 @@ export default function MeteorologyFlowMap({
     const marker = L.marker([weather.lat, weather.lon], { icon: customIcon })
       .addTo(map)
       .bindPopup(`
-        <div class="p-3 bg-slate-950 border border-slate-800 text-white rounded-lg font-sans w-[220px]">
+        <div class="p-3 bg-slate-950 border border-slate-200 dark:border-zinc-800 text-white rounded-lg font-sans w-[220px]">
           <h4 class="text-xs font-black text-cyan-400 border-b border-slate-900 pb-1.5 flex items-center gap-1.5 uppercase">
             <Radio class="h-3.5 w-3.5 animate-pulse text-cyan-400" /> W.A.R. Telemetry Pin
           </h4>
@@ -803,13 +803,13 @@ export default function MeteorologyFlowMap({
       { text: 'SEVERE HAZARD', style: 'bg-orange-500/10 border-orange-500/30 text-orange-400 font-bold' },
       { text: 'CRITICAL RESPIRATORY WARNING', style: 'bg-red-500/20 border-red-500/40 text-red-400 font-black animate-pulse' }
     ];
-    return dataSet[val - 1] || { text: 'BASELINE', style: 'bg-slate-900 border-slate-800 text-slate-400' };
+    return dataSet[val - 1] || { text: 'BASELINE', style: 'bg-slate-900 border-slate-200 dark:border-zinc-800 text-slate-400' };
   };
 
   const aqiBadge = getAQIStatusBadge(aqi_val);
 
   return (
-    <div id="enterprise-meteo-core" className="grid grid-cols-1 xl:grid-cols-12 gap-6 bg-[#0a071b] dark:bg-[#0a071b] border border-cyan-500/15 rounded-3xl p-6 shadow-[0_0_50px_rgba(34,211,238,0.02)] transition-all">
+    <div id="enterprise-meteo-core" className="grid grid-cols-1 xl:grid-cols-12 gap-6 bg-white dark:bg-[#0e1017] border border-slate-200 dark:border-cyan-500/15 border border-cyan-500/15 rounded-3xl p-6 shadow-[0_0_50px_rgba(34,211,238,0.02)] transition-all">
       
       {/* ENTERPRISE TITLE BLOCK */}
       <div className="xl:col-span-12 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-cyan-500/10 pb-5">
@@ -831,7 +831,7 @@ export default function MeteorologyFlowMap({
         {/* Temporal Playpause controllers */}
         <div className="flex flex-wrap items-center gap-3">
           {/* timeline playing status */}
-          <div className="bg-slate-950/85 border border-cyan-500/15 rounded-xl px-3.5 py-1.5 flex items-center gap-3 font-mono text-xs">
+          <div className="bg-slate-100/80 dark:bg-[#090a0f]/85 border border-slate-200 dark:border-cyan-500/15 border border-cyan-500/15 rounded-xl px-3.5 py-1.5 flex items-center gap-3 font-mono text-xs">
             <Clock className="h-4 w-4 text-cyan-400 animate-pulse" />
             <span className="text-[#bcb8d0] font-bold">PROJECTION HOUR:</span>
             <span className="text-amber-400 font-black tracking-wider text-sm">{timelineHour}:00 {timelineHour >= 12 ? 'PM' : 'AM'}</span>
@@ -842,7 +842,7 @@ export default function MeteorologyFlowMap({
             className={`p-2 rounded-xl border cursor-pointer hover:scale-105 transition-all text-xs font-bold flex items-center gap-1.5 ${
               isPlayingTimeline 
                 ? 'bg-cyan-500/15 border-cyan-500/30 text-cyan-300' 
-                : 'bg-slate-950 border-slate-850 text-slate-400 hover:text-white'
+                : 'bg-slate-950 border-slate-200 dark:border-zinc-800 text-slate-400 hover:text-white'
             }`}
           >
             {isPlayingTimeline ? <Pause className="h-3.5 w-3.5 text-cyan-400" /> : <Play className="h-3.5 w-3.5 text-amber-500" />}
@@ -857,7 +857,7 @@ export default function MeteorologyFlowMap({
             className={`px-3 py-1.5 rounded-xl border text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer ${
               useSandbox 
                 ? 'bg-amber-500/20 border-amber-500/40 text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.1)]'
-                : 'bg-slate-950/80 border-slate-850 text-slate-400 hover:text-white'
+                : 'bg-slate-100/80 dark:bg-[#090a0f]/80 border-slate-200 dark:border-zinc-800 text-slate-400 hover:text-white'
             }`}
           >
             <Sliders className="h-3.5 w-3.5" />
@@ -867,7 +867,7 @@ export default function MeteorologyFlowMap({
       </div>
 
       {/* REAL-TIME CLIENT-SERVER TELEMETRY COMPLIANCE AND PACKET LOGS BAR */}
-      <div id="synoptic-live-telemetry-synapse" className="xl:col-span-12 bg-slate-950/40 border border-cyan-500/10 rounded-2xl p-4 flex flex-col lg:flex-row gap-5 justify-between items-stretch shadow-inner backdrop-blur-md">
+      <div id="synoptic-live-telemetry-synapse" className="xl:col-span-12 bg-slate-50 dark:bg-[#090a0f]/40 border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/10 rounded-2xl p-4 flex flex-col lg:flex-row gap-5 justify-between items-stretch shadow-inner backdrop-blur-md">
         
         {/* Connection status section */}
         <div className="flex items-center gap-4 border-r border-cyan-500/10 lg:pr-6 shrink-0">
@@ -891,7 +891,7 @@ export default function MeteorologyFlowMap({
         {/* Live Micro-Shifts Oscilloscope visualization */}
         <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center px-2 lg:px-4 min-w-[280px]">
           {/* Wind Shift */}
-          <div className="space-y-1 bg-slate-950/70 border border-cyan-500/5 rounded-xl px-3 py-1.5 flex flex-col justify-center">
+          <div className="space-y-1 bg-slate-50 dark:bg-[#090a0f]/70 border border-slate-200 dark:border-cyan-500/15 border border-cyan-500/5 rounded-xl px-3 py-1.5 flex flex-col justify-center">
             <div className="flex justify-between items-center text-[8px] font-mono uppercase text-slate-400 tracking-widest">
               <span>Live Wind Drift</span>
               <span className={`font-bold ${microShifts.windShift >= 0 ? 'text-[#00f3ff]' : 'text-rose-400'}`}>
@@ -912,7 +912,7 @@ export default function MeteorologyFlowMap({
           </div>
 
           {/* Gust Shift */}
-          <div className="space-y-1 bg-slate-950/70 border border-cyan-500/5 rounded-xl px-3 py-1.5 flex flex-col justify-center">
+          <div className="space-y-1 bg-slate-50 dark:bg-[#090a0f]/70 border border-slate-200 dark:border-cyan-500/15 border border-cyan-500/5 rounded-xl px-3 py-1.5 flex flex-col justify-center">
             <div className="flex justify-between items-center text-[8px] font-mono uppercase text-slate-400 tracking-widest">
               <span>Live Gust Delta</span>
               <span className="font-bold text-amber-500">▲</span>
@@ -931,7 +931,7 @@ export default function MeteorologyFlowMap({
           </div>
 
           {/* Pressure Ripple */}
-          <div className="space-y-1 bg-slate-950/70 border border-cyan-500/5 rounded-xl px-3 py-1.5 flex flex-col justify-center">
+          <div className="space-y-1 bg-slate-50 dark:bg-[#090a0f]/70 border border-slate-200 dark:border-cyan-500/15 border border-cyan-500/5 rounded-xl px-3 py-1.5 flex flex-col justify-center">
             <div className="flex justify-between items-center text-[8px] font-mono uppercase text-slate-400 tracking-widest">
               <span>Barometric Wave</span>
               <span className={`font-bold ${microShifts.pressureShift >= 0 ? 'text-[#00f3ff]' : 'text-[#818cf8]'}`}>
@@ -964,7 +964,7 @@ export default function MeteorologyFlowMap({
               <div className="text-[9px] font-mono text-slate-600 animate-pulse">Awaiting live telemetry packet arrival...</div>
             ) : (
               streamPackets.map((pkt) => (
-                <div key={pkt.id} className="bg-slate-950/85 border border-cyan-500/10 rounded-lg px-2.5 py-1 text-[8.5px] font-mono flex items-center gap-2 shrink-0 shadow-sm">
+                <div key={pkt.id} className="bg-slate-100/80 dark:bg-[#090a0f]/85 border border-slate-200 dark:border-cyan-500/15 border border-cyan-500/10 rounded-lg px-2.5 py-1 text-[8.5px] font-mono flex items-center gap-2 shrink-0 shadow-sm">
                   <span className="text-emerald-400">● {pkt.time}</span>
                   <span className="text-slate-500">PKT-{pkt.id}</span>
                   <span className="text-cyan-400 font-bold">W:{pkt.wind}</span>
@@ -982,7 +982,7 @@ export default function MeteorologyFlowMap({
       <div className="xl:col-span-12 flex flex-col gap-4">
         
         {/* Animated Meteorological Control Tabs Section */}
-        <div id="meteo-control-deck" className="flex flex-col gap-3.5 bg-slate-950/70 border border-cyan-500/15 p-4 rounded-3xl backdrop-blur-md shadow-2xl">
+        <div id="meteo-control-deck" className="flex flex-col gap-3.5 bg-slate-50 dark:bg-[#090a0f]/70 border border-slate-200 dark:border-cyan-500/15 border border-cyan-500/15 p-4 rounded-3xl backdrop-blur-md shadow-2xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cyan-500/10 pb-3">
             <div className="flex items-center gap-2">
               <span className="flex h-2 w-2 relative">
@@ -1003,7 +1003,7 @@ export default function MeteorologyFlowMap({
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-black tracking-wider transition-all cursor-pointer ${
                   activeMeteoTab === 'coordinates'
                     ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.15)] scale-105'
-                    : 'bg-slate-950/50 border-slate-850 text-slate-500 hover:text-slate-300'
+                    : 'bg-slate-100 dark:bg-[#090a0f]/50 border-slate-200 dark:border-slate-200 dark:border-zinc-800 border-slate-200 dark:border-zinc-800 text-slate-500 hover:text-slate-300'
                 }`}
               >
                 <Compass className={`h-3.5 w-3.5 ${activeMeteoTab === 'coordinates' ? 'animate-spin_slow text-cyan-400' : 'text-slate-500'}`} />
@@ -1018,7 +1018,7 @@ export default function MeteorologyFlowMap({
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[10px] font-black tracking-wider transition-all cursor-pointer ${
                   activeMeteoTab === 'matrices'
                     ? 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300 shadow-[0_0_15px_rgba(34,211,238,0.15)] scale-105'
-                    : 'bg-slate-950/50 border-slate-850 text-slate-500 hover:text-slate-300'
+                    : 'bg-slate-100 dark:bg-[#090a0f]/50 border-slate-200 dark:border-slate-200 dark:border-zinc-800 border-slate-200 dark:border-zinc-800 text-slate-500 hover:text-slate-300'
                 }`}
               >
                 <Layers className={`h-3.5 w-3.5 ${activeMeteoTab === 'matrices' ? 'animate-pulse text-cyan-400' : 'text-slate-500'}`} />
@@ -1084,7 +1084,7 @@ export default function MeteorologyFlowMap({
                           type="checkbox" 
                           checked={layers.all} 
                           onChange={() => toggleLayer('all')}
-                          className="rounded border-slate-800 bg-slate-950 text-cyan-600 focus:ring-cyan-500 h-3.5 w-3.5 cursor-pointer"
+                          className="rounded border-slate-200 dark:border-zinc-800 bg-slate-950 text-cyan-600 focus:ring-cyan-500 h-3.5 w-3.5 cursor-pointer"
                         />
                       </label>
                     </div>
@@ -1125,7 +1125,7 @@ export default function MeteorologyFlowMap({
                         { key: 'clouds', name: 'Cloud Cover Vecs', icon: <Cloud className="h-3 w-3 text-slate-350" /> },
                         { key: 'rain', name: 'Precip Streams', icon: <ChevronsRight className="h-3 w-3 text-cyan-350" /> },
                       ] as const).map((item) => (
-                        <label key={item.key} className="flex items-center justify-between text-[10px] text-[#bcb8d0] hover:text-white cursor-pointer select-none bg-slate-950/40 border border-slate-900 hover:border-cyan-500/10 px-2 py-1.5 rounded-lg transition-all truncate">
+                        <label key={item.key} className="flex items-center justify-between text-[10px] text-[#bcb8d0] hover:text-white cursor-pointer select-none bg-slate-50 dark:bg-[#090a0f]/40 border border-slate-200 dark:border-cyan-500/10 border border-slate-900 hover:border-cyan-500/10 px-2 py-1.5 rounded-lg transition-all truncate">
                           <span className="flex items-center gap-1.5 font-sans font-medium truncate">
                             {item.icon}
                             <span className="truncate">{item.name}</span>
@@ -1159,7 +1159,7 @@ export default function MeteorologyFlowMap({
           />
 
           {/* Time Projection slider overlap */}
-          <div className="absolute bottom-4 left-4 right-4 z-30 bg-slate-950/90 backdrop-blur-md border border-cyan-500/15 rounded-2xl p-4 shadow-3xl text-xs flex flex-col md:flex-row items-center gap-4">
+          <div className="absolute bottom-4 left-4 right-4 z-30 bg-white/95 dark:bg-[#090a0f]/90 border border-slate-200 dark:border-cyan-500/15 backdrop-blur-md border border-cyan-500/15 rounded-2xl p-4 shadow-3xl text-xs flex flex-col md:flex-row items-center gap-4">
             <div className="flex items-center gap-1.5 shrink-0">
               <Clock className="h-4 w-4 text-cyan-400" />
               <span className="font-black text-cyan-400 uppercase tracking-widest text-[9px] font-sans">Timeline slider Projection</span>
@@ -1187,7 +1187,7 @@ export default function MeteorologyFlowMap({
         </div>
 
         {/* Dynamic customized physical wind volume slider */}
-        <div className="bg-slate-950/40 border border-cyan-500/10 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="bg-slate-50 dark:bg-[#090a0f]/40 border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/10 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <Sliders className="h-4 w-4 text-cyan-400" />
             <div>
@@ -1220,7 +1220,7 @@ export default function MeteorologyFlowMap({
         {/* COLUMN 1: LIVE SENSOR READOUTS */}
         <div className="flex flex-col gap-6">
           {/* ACTIVE SENSORS DIGITAL METRICS READOUT DECK */}
-        <div className="bg-[#141125] border border-cyan-500/10 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-4 min-h-[340px]">
+        <div className="bg-white dark:bg-[#131622] border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/10 rounded-3xl p-5 shadow-2xl flex flex-col justify-between gap-4 min-h-[340px]">
           <div>
             <div className="flex items-center justify-between border-b border-cyan-500/5 pb-3">
               <span className="text-[10px] uppercase font-black tracking-widest text-[#bcb8d0] flex items-center gap-1.5">
@@ -1239,7 +1239,7 @@ export default function MeteorologyFlowMap({
 
           <div className="space-y-3.5 my-1">
             {/* WIND STREAM DIRECTION ALIGNMENT */}
-            <div className="flex items-center justify-between bg-slate-950/40 border border-cyan-500/5 p-2.5 rounded-2xl">
+            <div className="flex items-center justify-between bg-slate-50 dark:bg-[#090a0f]/40 border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/5 p-2.5 rounded-2xl">
               <div className="flex items-center gap-2">
                 <Wind className="h-4 w-4 text-cyan-400" />
                 <div>
@@ -1260,12 +1260,12 @@ export default function MeteorologyFlowMap({
 
             {/* TEMP READOUT */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-slate-950/40 border border-cyan-500/5 p-2.5 rounded-2xl">
+              <div className="bg-slate-50 dark:bg-[#090a0f]/40 border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/5 p-2.5 rounded-2xl">
                 <p className="text-[8px] text-slate-500 font-bold uppercase">Thermal Energy</p>
                 <p className="text-sm font-black text-rose-400 mt-1 font-mono">{temp.toFixed(1)}°C</p>
               </div>
 
-              <div className="bg-slate-950/40 border border-cyan-500/5 p-2.5 rounded-2xl">
+              <div className="bg-slate-50 dark:bg-[#090a0f]/40 border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/5 p-2.5 rounded-2xl">
                 <p className="text-[8px] text-slate-500 font-bold uppercase">Humidity vapour</p>
                 <p className="text-sm font-black text-sky-400 mt-1 font-mono">{humidity.toFixed(0)}%</p>
               </div>
@@ -1273,19 +1273,19 @@ export default function MeteorologyFlowMap({
 
             {/* ACTINIC UV AND SOLID PRESSURES */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="bg-slate-950/40 border border-cyan-500/5 p-2.5 rounded-2xl">
+              <div className="bg-slate-50 dark:bg-[#090a0f]/40 border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/5 p-2.5 rounded-2xl">
                 <p className="text-[8px] text-slate-500 font-bold uppercase">Solar Actinic UV</p>
                 <p className="text-sm font-black text-pink-400 mt-1 font-mono">UVI {uvi.toFixed(1)}</p>
               </div>
 
-              <div className="bg-slate-950/40 border border-cyan-500/5 p-2.5 rounded-2xl">
+              <div className="bg-slate-50 dark:bg-[#090a0f]/40 border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/5 p-2.5 rounded-2xl">
                 <p className="text-[8px] text-slate-500 font-bold uppercase">Clouds density</p>
                 <p className="text-sm font-black text-slate-300 mt-1 font-mono">{clouds}% Cover</p>
               </div>
             </div>
 
             {/* AIR VALUE QUALITY HIGHLIGHT */}
-            <div className="bg-slate-950/40 border border-cyan-500/5 p-2.5 rounded-2xl flex items-center justify-between">
+            <div className="bg-slate-50 dark:bg-[#090a0f]/40 border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/5 p-2.5 rounded-2xl flex items-center justify-between">
               <div>
                 <p className="text-[8px] text-slate-500 font-bold uppercase">Air Quality PM2.5 Grid</p>
                 <p className="text-[10px] font-black text-white font-mono mt-0.5">WHO Tier Rank: {aqi_val}</p>
@@ -1311,7 +1311,7 @@ export default function MeteorologyFlowMap({
         <div className="flex flex-col gap-6">
           {/* INTERACTIVE STATE SLIDERS (IF OVERRIDE MODE ENABLED) */}
           {useSandbox && (
-          <div id="simulation-slider-control-deck" className="bg-[#141125] border border-amber-500/15 rounded-3xl p-5 space-y-4 shadow-xl">
+          <div id="simulation-slider-control-deck" className="bg-white dark:bg-[#131622] border border-slate-200 dark:border-cyan-500/10 border border-amber-500/15 rounded-3xl p-5 space-y-4 shadow-xl">
             <div className="flex items-center justify-between pb-2.5 border-b border-amber-500/10">
               <span className="text-[10px] font-black uppercase text-amber-500 flex items-center gap-1.5">
                 <Sliders className="h-4 w-4 animate-pulse" /> Sandbox Command Slate
@@ -1463,11 +1463,11 @@ export default function MeteorologyFlowMap({
         )}
 
         {/* REGIONAL LOGS - REAL-TIME DIAGNOSTIC DECK TYPE */}
-        <div className="bg-[#141125] border border-cyan-500/10 rounded-3xl p-5 space-y-3.5">
+        <div className="bg-white dark:bg-[#131622] border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/10 rounded-3xl p-5 space-y-3.5">
           <span className="text-[10px] font-black uppercase text-[#bcb8d0] flex items-center gap-1.5 font-sans">
             <TerminalIcon className="h-4 w-4 text-cyan-400" /> Active System Diagnostic Log
           </span>
-          <div className="bg-slate-950/70 rounded-2xl p-3 border border-cyan-500/5 min-h-[110px] flex flex-col justify-end">
+          <div className="bg-slate-50 dark:bg-[#090a0f]/70 border border-slate-200 dark:border-cyan-500/15 rounded-2xl p-3 border border-cyan-500/5 min-h-[110px] flex flex-col justify-end">
             <div className="space-y-1.5 mt-1 font-mono text-[9px] text-cyan-300">
               {terminalLogs.map((log, lIdx) => (
                 <div key={lIdx} className="opacity-90 flex items-start gap-1 leading-normal">
@@ -1484,7 +1484,7 @@ export default function MeteorologyFlowMap({
         {/* COLUMN 3: SYSTEM REFERENCE LEGENDS */}
         <div className="flex flex-col gap-6">
           {/* DETAILED PHYSICS WAVEFORM LEGENDS - DETAILED MATHEMATICAL READOUT */}
-          <div id="detailed-synoptic-legend" className="bg-[#141125] border border-cyan-500/10 rounded-3xl p-5 space-y-4">
+          <div id="detailed-synoptic-legend" className="bg-white dark:bg-[#131622] border border-slate-200 dark:border-cyan-500/10 border border-cyan-500/10 rounded-3xl p-5 space-y-4">
           <span className="text-[10px] font-black uppercase text-cyan-400 flex items-center gap-1.5">
             <HelpCircle className="h-4 w-4 text-cyan-450 animate-pulse" /> Advanced Waves Synoptic Legend
           </span>

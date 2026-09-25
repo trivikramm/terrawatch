@@ -27,9 +27,10 @@ interface WardenAlertsProps {
   alerts: AlertNotification[];
   isLoading: boolean;
   onRefresh: () => void;
+  theme?: 'light' | 'dark';
 }
 
-export default function WardenAlerts({ alerts, isLoading, onRefresh }: WardenAlertsProps) {
+export default function WardenAlerts({ alerts, isLoading, onRefresh, theme = 'dark' }: WardenAlertsProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [severityFilter, setSeverityFilter] = useState<'all' | 'critical' | 'warning' | 'info'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'seismic' | 'weather' | 'system'>('all');

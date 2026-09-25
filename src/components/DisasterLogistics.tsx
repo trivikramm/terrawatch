@@ -57,9 +57,10 @@ interface CargoTransit {
 interface DisasterLogisticsProps {
   token: string | null;
   onDispatchTriggered?: () => void;
+  theme?: 'light' | 'dark';
 }
 
-export default function DisasterLogistics({ token, onDispatchTriggered }: DisasterLogisticsProps) {
+export default function DisasterLogistics({ token, onDispatchTriggered, theme = 'dark' }: DisasterLogisticsProps) {
   const [warehouses, setWarehouses] = useState<WarehouseInstance[]>([]);
   const [cargoTransits, setCargoTransits] = useState<CargoTransit[]>([]);
   const [loading, setLoading] = useState(true);

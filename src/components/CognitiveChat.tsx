@@ -31,9 +31,10 @@ interface CognitiveChatProps {
   token: string | null;
   userName?: string;
   focalCity?: string;
+  theme?: 'light' | 'dark';
 }
 
-export default function CognitiveChat({ token, userName = 'Operator', focalCity = 'Trivandrum' }: CognitiveChatProps) {
+export default function CognitiveChat({ token, userName = 'Operator', focalCity = 'Trivandrum', theme = 'dark' }: CognitiveChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);

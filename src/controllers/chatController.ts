@@ -64,6 +64,9 @@ export async function handleChatMessage(req: Request, res: Response) {
     // Recognize Intent C: Logistics / Supply / Depots
     const hasLogisticsIntent = query.includes('dispatch') || query.includes('cargo') || query.includes('supply') || query.includes('warehouse') || query.includes('tracker') || query.includes('depot');
 
+    // Recognize Intent D: Financial & Market Intelligence (TerraWatch Market Domain)
+    const hasMarketIntent = query.includes('market') || query.includes('stock') || query.includes('nifty') || query.includes('sensex') || query.includes('crude') || query.includes('reliance') || query.includes('tcs') || query.includes('hdfc') || query.includes('infy') || query.includes('upstox') || query.includes('paper trade') || query.includes('portfolio') || query.includes('transmission') || query.includes('regime');
+
     // --- EXECUTE INTENT PROCESSING ---
     if (hasWeatherIntent) {
       // Look for custom city names
@@ -168,6 +171,14 @@ export async function handleChatMessage(req: Request, res: Response) {
       activeCargo.forEach(c => {
         dbMatchedContext += `- Cargo ${c.id} Name: ${c.cargoName} | Destination: ${c.destination} | Status: ${c.status} | Risk Level: ${c.riskLevel} | Hazards: ${c.notifiedHazard || 'none'}\n`;
       });
+    }
+
+    if (hasMarketIntent) {
+      dbMatchedContext += '\n[TERRAWATCH FINANCIAL & MARKET INTELLIGENCE STATE]:\n';
+      dbMatchedContext += 'Market Pulse: NIFTY 50 @ 24,850 (+0.58%), BANK NIFTY @ 51,920 (+0.62%), BRENT CRUDE @ $78.40 (+1.49%), INDIA VIX @ 13.45 (-3.24%), USD/INR @ 83.92\n';
+      dbMatchedContext += 'Current Market Regime: Bull (Confidence: 76%), Supported by banking and domestic inflows; key external risk is geopolitical crude volatility.\n';
+      dbMatchedContext += 'Event Transmission Active: (1) Sea of Japan M6.8 earthquake impacting semiconductor wafer lead times & auto tech; (2) Strait of Hormuz advisory creating aviation fuel margin compression and crude upstream tailwinds; (3) Bay of Bengal Super Cyclone tracking toward port logistics corridors.\n';
+      dbMatchedContext += 'Critical Principles: Always communicate probabilistic forecasts (P(Bullish), expected return distributions, confidence levels, scenario drivers, invalidation criteria). Never promise guaranteed profits or absolute directional outcomes.\n';
     }
 
     // Combine current telemetry snapshots and databases with Gemini instructions

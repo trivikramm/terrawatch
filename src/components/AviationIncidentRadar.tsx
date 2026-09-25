@@ -127,7 +127,11 @@ export const REGION_PRESETS: RegionPreset[] = [
   { id: 'australia', name: '🇦🇺 Australia / Oceania', bbox: 'lamin=-45&lomin=110&lamax=-10&lomax=160', center: [-27.0, 135.0], zoom: 4 }
 ];
 
-export default function AviationIncidentRadar() {
+interface AviationIncidentRadarProps {
+  theme?: 'light' | 'dark';
+}
+
+export default function AviationIncidentRadar({ theme = 'dark' }: AviationIncidentRadarProps = {}) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const [activeStyle, setActiveStyle] = useState<string>('slate');
@@ -632,7 +636,7 @@ Retry-After: 3600
       <div className="xl:col-span-12 flex flex-col gap-4">
         
         {/* Animated Meteorological Control Panel Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-950/70 border border-cyan-500/15 p-5 rounded-3xl backdrop-blur-md shadow-2xl">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#0e1017] border border-slate-200 dark:border-cyan-500/15 shadow-sm p-5 rounded-3xl backdrop-blur-md shadow-2xl">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="flex h-2.5 w-2.5 relative">
@@ -653,7 +657,7 @@ Retry-After: 3600
 
           <div className="flex flex-wrap gap-2.5 items-center">
             {/* Region Sector dropdown */}
-            <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5 focus-within:border-cyan-500/50 transition-all">
+            <div className="flex items-center gap-2 bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5 focus-within:border-cyan-500/50 transition-all">
               <span className="text-[10px] font-bold text-slate-500 font-mono">Region Sector:</span>
               <select
                 value={selectedRegion}
@@ -669,7 +673,7 @@ Retry-After: 3600
             </div>
 
             {/* Map Styles Selector */}
-            <div className="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-3 py-1.5">
+            <div className="flex items-center gap-2 bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 rounded-xl px-3 py-1.5">
               <span className="text-[10px] font-bold text-slate-500 font-mono">Basemap:</span>
               <select
                 value={activeStyle}
@@ -711,7 +715,7 @@ Retry-After: 3600
           </div>
 
           {/* Left HUD: Active Map Layers Control */}
-          <div className="absolute bottom-6 left-6 z-30 bg-slate-950/90 backdrop-blur-md border border-cyan-500/10 rounded-2xl p-4 shadow-3xl max-w-[240px]">
+          <div className="absolute bottom-6 left-6 z-30 bg-white/95 dark:bg-[#0e1017]/90 border border-slate-200 dark:border-cyan-500/10 backdrop-blur-md border border-cyan-500/10 rounded-2xl p-4 shadow-3xl max-w-[240px]">
             <span className="text-[10px] uppercase font-black tracking-widest text-[#bcb8d0] flex items-center gap-1.5 font-sans mb-3 pb-1.5 border-b border-cyan-500/10">
               <Layers className="h-4 w-4 text-cyan-400" /> Layer Matrix Filter
             </span>
@@ -753,7 +757,7 @@ Retry-After: 3600
               </label>
             </div>
 
-            <div className="mt-3.5 p-2 bg-slate-900/60 rounded-xl border border-slate-800 text-[10px] text-slate-400 font-mono">
+            <div className="mt-3.5 p-2 bg-slate-50 dark:bg-[#151822]/60 rounded-xl border border-slate-800 text-[10px] text-slate-400 font-mono">
               <div className="flex justify-between">
                 <span>Active Targets:</span>
                 <span className="text-white font-bold">{flights.length} flights</span>
@@ -870,7 +874,7 @@ Retry-After: 3600
                       href={selectedIncident.link}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center justify-center gap-1.5 w-full bg-slate-900 border border-slate-800 hover:bg-slate-850 hover:text-white transition-all py-1.5 rounded-lg text-[10px] font-bold text-slate-300 pointer-events-auto"
+                      className="inline-flex items-center justify-center gap-1.5 w-full bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 hover:bg-slate-850 hover:text-white transition-all py-1.5 rounded-lg text-[10px] font-bold text-slate-300 pointer-events-auto"
                     >
                       <span>Warden Case File Briefing</span>
                       <ExternalLink className="h-3.5 w-3.5" />
@@ -879,7 +883,7 @@ Retry-After: 3600
 
                 </motion.div>
               ) : (
-                <div className="bg-slate-950/90 backdrop-blur-md border border-slate-850 p-4 rounded-2xl shadow-3xl text-center">
+                <div className="bg-white/95 dark:bg-[#0e1017]/90 border border-slate-200 dark:border-cyan-500/10 backdrop-blur-md border border-slate-850 p-4 rounded-2xl shadow-3xl text-center">
                   <p className="text-[11px] text-slate-400 italic">Select any moving airplane ✈️ or hazard ⛈️ on the radar map to capture active digital transponder telemetry.</p>
                 </div>
               )}
@@ -893,7 +897,7 @@ Retry-After: 3600
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search disasters or coordinates..."
-                className="w-full bg-slate-950/90 text-[10px] border border-cyan-500/10 rounded-xl py-2 pl-9 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+                className="w-full bg-white/95 dark:bg-[#0e1017]/90 border border-slate-200 dark:border-cyan-500/10 text-[10px] border border-cyan-500/10 rounded-xl py-2 pl-9 pr-4 text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400"
               />
             </div>
 
@@ -996,7 +1000,7 @@ Retry-After: 3600
             </div>
           </div>
 
-          <div className="bg-slate-900/40 border border-slate-850 p-3.5 rounded-2xl text-[11px] leading-relaxed text-slate-450 space-y-1.5">
+          <div className="bg-slate-50 dark:bg-[#151822]/40 border border-slate-850 p-3.5 rounded-2xl text-[11px] leading-relaxed text-slate-450 space-y-1.5">
             <span className="font-extrabold uppercase text-slate-400 text-[10px] block font-mono">🔍 High Load Telemetry Synthesis</span>
             <p>
               Warden ground transponders track both real OpenSky Network feeds (where accessible) and automated state-vectors. Rapid high-moisture atmosphere convergence in Texas induces critical signal attenuation; low altitude flights over Houston and San Antonio are advised to transition under strict Instrument Flight Rules (IFR).

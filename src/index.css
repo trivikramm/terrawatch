@@ -17,64 +17,82 @@
 
 @layer base {
   :root {
-    /* AI21 Light Theme */
+    /* Clean Crisp White Theme */
     --background: #ffffff;
-    --surface: #f0f0f1;
-    --elevated: #e1dfec;
-    --primary: #212121;
-    --secondary: #5b5675;
+    --surface: #ffffff;
+    --elevated: #f8fafc;
+    --primary: #0f172a;
+    --secondary: #475569;
     --brand-dark: #d00b4e;
     --brand-normal: #e61e93;
     --brand-light: #f06b98;
-    --accent-turquoise: #5ec6e8;
-    --accent-yellow: #f9bd64;
-    --hero-gradient: linear-gradient(0deg, #FFF4E1 0%, #F6F5F3 81.5%);
+    --accent-turquoise: #0284c7;
+    --accent-yellow: #f59e0b;
+    --hero-gradient: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
 
-    /* Retrofitting existing components so they map seamlessly to the custom brand color specs */
+    /* Semantic theme mappings */
     --bg-app: var(--background);
     --color-card: var(--surface);
     --color-panel: var(--elevated);
-    --color-border: var(--elevated);
+    --color-border: #e2e8f0;
     
     --color-text-main: var(--primary);
     --color-text-muted: var(--secondary);
-    --color-text-subtle: #7a7593;
+    --color-text-subtle: #64748b;
     
-    --color-header-bg: rgba(255, 255, 255, 0.85);
-    --color-header-border: var(--elevated);
+    --color-header-bg: rgba(255, 255, 255, 0.92);
+    --color-header-border: #e2e8f0;
   }
 
   .dark, :root.dark {
-    /* AI21 Dark Theme */
-    --background: #0a071b;
-    --surface: #141125;
-    --elevated: #2a263f;
-    --primary: #f0f0f1;
-    --secondary: #bcb8d0;
+    /* Sleek Clean Neutral Dark Theme (No Heavy Blue Tint) */
+    --background: #090a0f;
+    --surface: #11131a;
+    --elevated: #181b24;
+    --primary: #f8fafc;
+    --secondary: #94a3b8;
     --brand-dark: #6e42e1;
     --brand-normal: #f06b98;
     --brand-light: rgba(110, 66, 225, 0.15);
-    --accent-turquoise: #5ec6e8;
-    --accent-yellow: #f9bd64;
-    --hero-gradient: linear-gradient(0deg, #141125 0%, #0a071b 100%);
+    --accent-turquoise: #38bdf8;
+    --accent-yellow: #f59e0b;
+    --hero-gradient: linear-gradient(180deg, #11131a 0%, #090a0f 100%);
 
-    /* Retrofitting existing components so they map seamlessly to the custom brand color specs */
+    /* Semantic theme mappings */
     --bg-app: var(--background);
     --color-card: var(--surface);
     --color-panel: var(--elevated);
-    --color-border: var(--elevated);
+    --color-border: #232734;
     
     --color-text-main: var(--primary);
     --color-text-muted: var(--secondary);
-    --color-text-subtle: #5a5675;
+    --color-text-subtle: #64748b;
     
-    --color-header-bg: rgba(10, 7, 27, 0.8);
-    --color-header-border: var(--elevated);
+    --color-header-bg: rgba(9, 10, 15, 0.88);
+    --color-header-border: #232734;
   }
 
   body {
     background-color: var(--background);
     color: var(--primary);
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.25s ease, color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    overscroll-behavior-y: contain;
   }
 }
+
+/* Android Safe Area & Mobile Support */
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.pl-safe {
+  padding-left: env(safe-area-inset-left, 0px);
+}
+.pr-safe {
+  padding-right: env(safe-area-inset-right, 0px);
+}
+

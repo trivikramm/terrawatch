@@ -25,9 +25,10 @@ interface OperatorTerminalProps {
   user: { id: string; email: string; name: string } | null;
   onAuthSuccess: (token: string, user: { id: string; email: string; name: string }) => void;
   onLogout: () => void;
+  theme?: 'light' | 'dark';
 }
 
-export default function OperatorTerminal({ token, user, onAuthSuccess, onLogout }: OperatorTerminalProps) {
+export default function OperatorTerminal({ token, user, onAuthSuccess, onLogout, theme = 'dark' }: OperatorTerminalProps) {
   const [isLoginView, setIsLoginView] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

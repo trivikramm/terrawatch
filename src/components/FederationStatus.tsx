@@ -40,7 +40,11 @@ interface FederationMetrics {
   activeWSSConnections: number;
 }
 
-export default function FederationStatus() {
+interface FederationStatusProps {
+  theme?: 'light' | 'dark';
+}
+
+export default function FederationStatus({ theme = 'dark' }: FederationStatusProps = {}) {
   const [metrics, setMetrics] = useState<FederationMetrics | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="50%" stop-color="#0B0F19"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8"/>
+      <stop offset="50%" stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#4F46E5"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#34D399"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0284C7" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  
+  <!-- Outer Radar Pulse Rings -->
+  <circle cx="256" cy="256" r="190" fill="none" stroke="#1E293B" stroke-width="3" stroke-dasharray="8 8"/>
+  <circle cx="256" cy="256" r="140" fill="none" stroke="#0284C7" stroke-width="2" stroke-opacity="0.3"/>
+  <circle cx="256" cy="256" r="90" fill="none" stroke="#38BDF8" stroke-width="2" stroke-opacity="0.4"/>
+
+  <!-- Globe Outline -->
+  <ellipse cx="256" cy="256" rx="140" ry="140" fill="none" stroke="url(#glow)" stroke-width="6" filter="url(#shadow)"/>
+  <ellipse cx="256" cy="256" rx="60" ry="140" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-opacity="0.6"/>
+  <line x1="116" y1="256" x2="396" y2="256" stroke="#38BDF8" stroke-width="2.5" stroke-opacity="0.6"/>
+  <line x1="135" y1="185" x2="377" y2="185" stroke="#38BDF8" stroke-width="1.5" stroke-opacity="0.4"/>
+  <line x1="135" y1="327" x2="377" y2="327" stroke="#38BDF8" stroke-width="1.5" stroke-opacity="0.4"/>
+
+  <!-- Seismic / Signal Pulse Spike -->
+  <path d="M 150 256 L 210 256 L 230 180 L 250 330 L 270 210 L 290 280 L 310 256 L 362 256" 
+        fill="none" stroke="url(#pulse)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" filter="url(#shadow)"/>
+
+  <!-- Satellite Beacon Dot -->
+  <circle cx="370" cy="140" r="12" fill="#F43F5E"/>
+  <circle cx="370" cy="140" r="22" fill="none" stroke="#F43F5E" stroke-width="2.5" stroke-opacity="0.5"/>
+</svg>

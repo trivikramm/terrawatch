@@ -25,9 +25,16 @@ import {
   Send,
   Sun,
   Moon,
-  Info
+  Info,
+  Smartphone
 } from 'lucide-react';
 import { Earthquake, WeatherData, ClimateInsights, AlertNotification } from './types';
+
+// Importing Android Native & Mobile Components
+import { nativeAndroid } from './services/nativeAndroid';
+import { AndroidCompanionModal } from './components/AndroidCompanionModal';
+import { AndroidBottomNav } from './components/AndroidBottomNav';
+import { ThemeToggle } from './components/ThemeToggle';
 
 // Importing Custom Layout Components
 import WeatherCard from './components/WeatherCard';
@@ -51,13 +58,25 @@ import OperatorTerminal from './components/OperatorTerminal';
 import SatelliteEmbeddingViewer from './components/SatelliteEmbeddingViewer';
 import WardenAlerts from './components/WardenAlerts';
 import AviationIncidentRadar from './components/AviationIncidentRadar';
+import { MarketIntelligence } from './components/market/MarketIntelligence';
 
 // Default fallback selected city
 const DEFAULT_CITY = { name: 'Trivandrum', lat: 8.5241, lon: 76.9366, country: 'IN' };
 
 export default function App() {
   // Navigation State
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'alerts' | 'seismic' | 'meteo' | 'supplyChain' | 'chat' | 'federation' | 'terminal'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'alerts' | 'seismic' | 'meteo' | 'satellite' | 'airspace' | 'supplyChain' | 'market' | 'chat' | 'federation' | 'terminal'>('dashboard');
+
+  // Android Native Companion modal state
+  const [isAndroidCompanionOpen, setIsAndroidCompanionOpen] = useState(false);
+
+  // Initialize Native Android Hardware Services & Status Bar
+  useEffect(() => {
+    nativeAndroid.initialize();
+  }, []);
+
+  // Market Intelligence tick state
+  const [latestMarketTick, setLatestMarketTick] = useState<any>(null);
 
   // Token & Authenticated Operator States
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('terrawatch_jwt'));
@@ -291,6 +310,11 @@ export default function App() {
               });
             }
 
+            // Handles real-time market ticks
+            if (data.type === 'market_tick') {
+              setLatestMarketTick(data.data);
+            }
+
             // Handles push severe notifications
             if (data.type === 'push_alert' && data.alert) {
               const alert = data.alert;
@@ -425,18 +449,26 @@ export default function App() {
   const gustAdjusted = weather && weather.current.wind_gust ? Math.max((weather.current.wind_gust + microShifts.gustShift), 0) : undefined;
   const pressureAdjusted = weather ? (weather.current.pressure + microShifts.pressureShift) : 1013;
 
+  // Tab change handler with tactile haptic feedback
+  const handleTabChange = (tab: any) => {
+    nativeAndroid.hapticImpact('light');
+    setActiveTab(tab);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col lg:flex-row selection:bg-cyan-500/25 selection:text-cyan-605 dark:selection:text-cyan-300 antialiased font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#090a0f] text-slate-800 dark:text-slate-100 flex flex-col lg:flex-row selection:bg-cyan-500/25 selection:text-cyan-700 dark:selection:text-cyan-300 antialiased font-sans transition-colors duration-200">
       
       {/* GOOGLE-STYLE COLLAPSIBLE INTEGRATED NAVIGATION SIDEBAR */}
       <Sidebar 
         activeTab={activeTab}
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         user={operator}
         onLogout={handleLogout}
         eqCount={earthquakes.filter(e => e.magnitude >= 4.5).length}
         cargoCount={activeCargoCount}
         theme={theme}
+        onThemeToggle={setTheme}
+        onOpenAndroidCompanion={() => setIsAndroidCompanionOpen(true)}
       />
 
       {/* DETAILED PUSH ALERT FLOATING TOASTS */}
@@ -506,36 +538,47 @@ export default function App() {
       </div>
 
       {/* CORE WORKSPACE CONTENT COLUMN */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen pb-16 lg:pb-0">
         
         {/* DESKTOP INTEGRATED SUB BAR */}
-        <header className="hidden lg:block border-b border-slate-200 dark:border-slate-900 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md sticky top-0 z-50 px-6 py-3 transition-colors duration-300">
+        <header className="hidden lg:block border-b border-slate-200 dark:border-zinc-800/80 bg-white/90 dark:bg-[#0b0c12]/90 backdrop-blur-md sticky top-0 z-50 px-6 py-3 transition-colors duration-200">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold font-mono">
               <span>ACTIVE CLIMATE SUBSTATION:</span>
-              <span className="text-slate-800 dark:text-white font-extrabold flex items-center gap-1"><MapPin className="h-3.5 w-3.5 text-cyan-500" /> {selectedCity.name} ({selectedCity.country})</span>
+              <span className="text-slate-900 dark:text-white font-extrabold flex items-center gap-1"><MapPin className="h-3.5 w-3.5 text-cyan-500" /> {selectedCity.name} ({selectedCity.country})</span>
             </div>
 
             <div className="flex items-center gap-3">
               {/* WS Connectivity Indicator */}
-              <div className="flex items-center gap-2 bg-slate-100/50 dark:bg-slate-900/40 px-3 py-1.5 border border-slate-200 dark:border-slate-800 rounded-lg">
+              <div className="flex items-center gap-2 bg-slate-100/70 dark:bg-zinc-900/60 px-3 py-1.5 border border-slate-200 dark:border-zinc-800 rounded-lg">
                 <span className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400">Stream: {wsConnected ? 'Connected' : 'Disconnected'}</span>
+                <span className="text-[10px] font-bold text-slate-600 dark:text-zinc-400">Stream: {wsConnected ? 'Connected' : 'Disconnected'}</span>
               </div>
 
-              {/* Theme Toggle */}
+              {/* Android Native Hub Button */}
               <button
-                id="header-theme-toggle-btn"
-                onClick={() => setTheme((t) => (t === 'light' ? 'dark' : 'light'))}
-                className="bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 p-2 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-white transition-all active:scale-95 cursor-pointer"
+                onClick={() => {
+                  nativeAndroid.hapticImpact('light');
+                  setIsAndroidCompanionOpen(true);
+                }}
+                className="flex items-center gap-1.5 bg-emerald-500/10 hover:bg-emerald-500/20 px-2.5 py-1.5 border border-emerald-500/30 rounded-lg text-emerald-600 dark:text-emerald-400 hover:text-emerald-700 dark:hover:text-emerald-300 transition-all active:scale-95 cursor-pointer text-xs font-medium"
+                title="Open Android Native Hub & APK Setup"
               >
-                {theme === 'light' ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
+                <Smartphone className="h-3.5 w-3.5 text-emerald-500 dark:text-emerald-400" />
+                <span className="font-mono text-[10px] font-semibold">ANDROID</span>
               </button>
+
+              {/* Prominent Theme Toggle Button Switcher */}
+              <ThemeToggle
+                theme={theme}
+                onToggle={setTheme}
+                variant="pill"
+              />
 
               {/* Refresh */}
               <button
                 onClick={forceRefresh}
-                className="bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-880 p-2 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-white transition-all active:scale-95 cursor-pointer"
+                className="bg-white hover:bg-slate-50 dark:bg-zinc-900 dark:hover:bg-zinc-800 p-2 border border-slate-200 dark:border-zinc-800 rounded-lg text-slate-500 hover:text-slate-800 dark:hover:text-white transition-all active:scale-95 cursor-pointer"
                 title="Refresh Active Substation telemetry"
               >
                 <RefreshCw className="h-3.5 w-3.5" />
@@ -998,7 +1041,7 @@ export default function App() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                <SatelliteEmbeddingViewer />
+                <SatelliteEmbeddingViewer theme={theme} />
               </motion.div>
             )}
 
@@ -1011,7 +1054,7 @@ export default function App() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                <AviationIncidentRadar />
+                <AviationIncidentRadar theme={theme} />
               </motion.div>
             )}
 
@@ -1027,6 +1070,7 @@ export default function App() {
                 <DisasterLogistics 
                   token={token} 
                   onDispatchTriggered={fetchCargoCount}
+                  theme={theme}
                 />
               </motion.div>
             )}
@@ -1044,6 +1088,23 @@ export default function App() {
                   alerts={alertsList}
                   isLoading={alertsLoading}
                   onRefresh={fetchAlertsLedger}
+                  theme={theme}
+                />
+              </motion.div>
+            )}
+
+            {/* 4.75) FINANCIAL & MARKET INTELLIGENCE TAB */}
+            {activeTab === 'market' && (
+              <motion.div 
+                key="market-view"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <MarketIntelligence 
+                  theme={theme}
+                  externalTick={latestMarketTick}
                 />
               </motion.div>
             )}
@@ -1061,6 +1122,7 @@ export default function App() {
                   token={token}
                   userName={operator ? operator.name : 'System Guest Operator'}
                   focalCity={selectedCity.name}
+                  theme={theme}
                 />
               </motion.div>
             )}
@@ -1074,7 +1136,7 @@ export default function App() {
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
               >
-                <FederationStatus />
+                <FederationStatus theme={theme} />
               </motion.div>
             )}
 
@@ -1092,6 +1154,7 @@ export default function App() {
                   user={operator}
                   onAuthSuccess={handleAuthSuccess}
                   onLogout={handleLogout}
+                  theme={theme}
                 />
               </motion.div>
             )}
@@ -1112,6 +1175,25 @@ export default function App() {
         </footer>
 
       </div>
+
+      {/* MOBILE BOTTOM NAVIGATION FOR ANDROID & TOUCH */}
+      <AndroidBottomNav 
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+        onOpenAndroidCompanion={() => setIsAndroidCompanionOpen(true)}
+        alertCount={alertsList.filter(a => a.severity === 'critical').length}
+        eqCount={earthquakes.filter(e => e.magnitude >= 4.5).length}
+        theme={theme}
+        onThemeToggle={setTheme}
+      />
+
+      {/* ANDROID NATIVE COMPANION, APK BUILD & HAPTICS MODAL */}
+      <AndroidCompanionModal 
+        isOpen={isAndroidCompanionOpen}
+        onClose={() => setIsAndroidCompanionOpen(false)}
+        theme={theme}
+        onThemeToggle={setTheme}
+      />
 
     </div>
   );

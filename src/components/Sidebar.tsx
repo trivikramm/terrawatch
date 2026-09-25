@@ -20,8 +20,11 @@ import {
   ShieldAlert,
   Bell,
   Plane,
-  Layers
+  Layers,
+  TrendingUp,
+  Smartphone
 } from 'lucide-react';
+import { ThemeToggle } from './ThemeToggle';
 
 interface SidebarProps {
   activeTab: string;
@@ -31,6 +34,8 @@ interface SidebarProps {
   eqCount: number;
   cargoCount: number;
   theme?: 'light' | 'dark';
+  onThemeToggle?: (theme: 'light' | 'dark') => void;
+  onOpenAndroidCompanion?: () => void;
 }
 
 // Highly operational advanced logo with orbiting indicators
@@ -100,6 +105,8 @@ export default function Sidebar({
   eqCount,
   cargoCount,
   theme = 'dark',
+  onThemeToggle,
+  onOpenAndroidCompanion,
 }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -113,6 +120,7 @@ export default function Sidebar({
     { id: 'satellite', label: 'AlphaEarth Geospatial', icon: Layers, count: 0, highlighted: true },
     { id: 'airspace', label: 'Aero & Incident Watch', icon: Plane, count: 0, highlighted: true },
     { id: 'supplyChain', label: 'Crisis Logistics Hub', icon: Truck, count: cargoCount },
+    { id: 'market', label: 'Market & Risk Intel', icon: TrendingUp, count: 0, highlighted: true },
     { id: 'chat', label: 'Op Intelligence Liaison', icon: Bot, count: 0, highlighted: true },
     { id: 'federation', label: 'Federated Schema Status', icon: Network, count: 0 },
     { id: 'terminal', label: 'Operator Terminal', icon: KeyRound, count: 0 },
@@ -128,8 +136,8 @@ export default function Sidebar({
       {/* MOBILE HEADER BAR */}
       <div className={`lg:hidden ${
         isSidebarDark 
-          ? 'bg-slate-950 border-b border-slate-900 text-slate-100' 
-          : 'bg-white border-b border-slate-200 text-slate-800'
+          ? 'bg-[#090a0f] border-b border-zinc-800/80 text-zinc-100' 
+          : 'bg-white border-b border-slate-200 text-slate-900'
       } flex items-center justify-between p-3 sticky top-0 z-[1001] w-full transition-colors duration-300`}>
         <div className="flex items-center gap-3">
           {/* Menu button is now on the left, before the app name */}
@@ -155,15 +163,23 @@ export default function Sidebar({
           </div>
         </div>
 
-        {/* Alerts / Bell Indicator on the right side */}
-        <div className={`flex items-center gap-2 ${isSidebarDark ? 'text-slate-400' : 'text-slate-550'}`} id="header-alerts-section">
+        {/* Theme toggle & alerts on the right side */}
+        <div className="flex items-center gap-2" id="header-alerts-section">
+          {onThemeToggle && (
+            <ThemeToggle
+              variant="compact"
+              theme={theme}
+              onToggle={onThemeToggle}
+              className="h-8 w-8 scale-90"
+            />
+          )}
           {eqCount > 0 && (
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-450 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
             </span>
           )}
-          <Bell className="h-5 w-5 animate-pulse" />
+          <Bell className={`h-5 w-5 animate-pulse ${isSidebarDark ? 'text-slate-400' : 'text-slate-500'}`} />
         </div>
       </div>
 
@@ -180,12 +196,12 @@ export default function Sidebar({
         mobileOpen ? 'translate-x-0' : '-translate-x-full'
       } ${
         isSidebarDark 
-          ? 'bg-slate-950 border-r border-slate-900 text-slate-200' 
+          ? 'bg-[#0e1017] border-r border-zinc-800 text-zinc-200' 
           : 'bg-white border-r border-slate-200 text-slate-800 shadow-xl'
       }`}>
         <div className="space-y-6">
           <div className={`flex items-center justify-between pb-4 border-b ${
-            isSidebarDark ? 'border-slate-900' : 'border-slate-100'
+            isSidebarDark ? 'border-zinc-800' : 'border-slate-100'
           }`}>
             <div className="flex items-center gap-2">
               <TerraWatchLogo size={26} />
@@ -193,7 +209,7 @@ export default function Sidebar({
                 isSidebarDark ? 'text-white' : 'text-slate-900'
               }`}>Telemetry Node V4</h2>
             </div>
-            <button onClick={() => setMobileOpen(false)} className={isSidebarDark ? 'text-slate-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}>
+            <button onClick={() => setMobileOpen(false)} className={isSidebarDark ? 'text-zinc-400 hover:text-white' : 'text-slate-500 hover:text-slate-900'}>
               <X className="h-4.5 w-4.5" />
             </button>
           </div>
@@ -242,6 +258,41 @@ export default function Sidebar({
           </nav>
         </div>
 
+        {/* Android Native Bridge Mobile Button */}
+        {onOpenAndroidCompanion && (
+          <button
+            onClick={() => {
+              onOpenAndroidCompanion();
+              setMobileOpen(false);
+            }}
+            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl border text-xs font-semibold transition active:scale-98 ${
+              isSidebarDark
+                ? 'bg-emerald-500/10 hover:bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
+                : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-700'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Smartphone className="w-4 h-4 text-emerald-400" />
+              <span>Android Bridge & Haptics</span>
+            </div>
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+              V4 APK
+            </span>
+          </button>
+        )}
+
+        {/* Mobile Drawer Theme Switcher */}
+        {onThemeToggle && (
+          <div className="pt-2">
+            <span className={`text-[10px] uppercase font-bold font-mono block mb-1.5 px-0.5 ${
+              isSidebarDark ? 'text-zinc-400' : 'text-slate-500'
+            }`}>
+              Color Theme
+            </span>
+            <ThemeToggle variant="sidebar" theme={theme} onToggle={onThemeToggle} />
+          </div>
+        )}
+
         {/* User state in sidebar bottom */}
         <div className={`pt-4 border-t space-y-2.5 ${
           isSidebarDark ? 'border-slate-900' : 'border-slate-100'
@@ -281,14 +332,14 @@ export default function Sidebar({
         collapsed ? 'w-[74px] p-2' : 'w-[250px] p-4'
       } ${
         isSidebarDark 
-          ? 'bg-slate-950 border-slate-900 text-slate-200' 
+          ? 'bg-[#0b0c12] border-zinc-800/80 text-zinc-200' 
           : 'bg-white border-slate-200 text-slate-800'
       } min-h-screen sticky top-0 z-40 transition-colors duration-300`}>
         
         <div className="space-y-6">
           {/* Sidebar header logo */}
           <div className={`flex items-center justify-between pb-3.5 border-b transition-colors ${
-            isSidebarDark ? 'border-slate-900' : 'border-slate-100'
+            isSidebarDark ? 'border-zinc-800' : 'border-slate-100'
           }`}>
             {!collapsed ? (
               <div className="flex items-center gap-2">
@@ -470,6 +521,68 @@ export default function Sidebar({
             )
           )}
           
+          {/* Android Native Bridge Desktop Button */}
+          {onOpenAndroidCompanion && (
+            collapsed ? (
+              <button
+                onClick={onOpenAndroidCompanion}
+                className={`h-10 w-10 rounded-xl flex items-center justify-center mx-auto transition cursor-pointer active:scale-95 ${
+                  isSidebarDark
+                    ? 'bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 text-emerald-400'
+                    : 'bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700'
+                }`}
+                title="Open Android Native Hub"
+              >
+                <Smartphone className="h-4.5 w-4.5" />
+              </button>
+            ) : (
+              <button
+                onClick={onOpenAndroidCompanion}
+                className={`w-full flex items-center justify-between p-2 rounded-xl border text-xs font-medium transition cursor-pointer active:scale-98 ${
+                  isSidebarDark
+                    ? 'bg-emerald-500/10 hover:bg-emerald-500/15 border-emerald-500/30 text-emerald-400'
+                    : 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-700'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Smartphone className="h-4 w-4 text-emerald-400" />
+                  <span className="font-semibold text-[11px]">Android Native Hub</span>
+                </div>
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                  READY
+                </span>
+              </button>
+            )
+          )}
+
+          {/* Desktop Theme Switcher */}
+          {onThemeToggle && (
+            <div className="py-1">
+              {collapsed ? (
+                <div className="flex justify-center">
+                  <ThemeToggle
+                    variant="compact"
+                    theme={theme}
+                    onToggle={onThemeToggle}
+                  />
+                </div>
+              ) : (
+                <div className="space-y-1">
+                  <span className={`text-[10px] uppercase font-bold font-mono block px-0.5 ${
+                    isSidebarDark ? 'text-zinc-400' : 'text-slate-500'
+                  }`}>
+                    Theme Mode
+                  </span>
+                  <ThemeToggle
+                    variant="sidebar"
+                    theme={theme}
+                    onToggle={onThemeToggle}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Toggle sidebar width icon at the very footer */}
           <button
             onClick={() => setCollapsed(!collapsed)}

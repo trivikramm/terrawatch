@@ -31,6 +31,22 @@ import { handleGetWeather, handleGetEarthquakes, handleSearchCities, handleGetAl
 import { handleGetWarehouses, handleGetCargo, handleDispatch, handleSimulateHazard } from './src/controllers/logisticsController.ts';
 import { handleChatMessage } from './src/controllers/chatController.ts';
 import { handleGetSatelliteEmbedding, handleGetEmbeddingHistory, handleCompareEmbeddings, handleGetChangeHotspots, handleExportHotspotsCSV } from './src/controllers/geospatialController.ts';
+import {
+  handleGetMarketPulse,
+  handleGetInstruments,
+  handleGetQuote,
+  handleGetHistory,
+  handleGetTechnicalAnalysis,
+  handleGetForecast,
+  handleGetTransmissions,
+  handleGetRegime,
+  handleGetScanner,
+  handleGetPortfolio,
+  handlePaperOrder,
+  handleResetPortfolio,
+  handleGetUpstoxStatus,
+  handleSetUpstoxConfig,
+} from './src/controllers/marketController.ts';
 import ee from '@google/earthengine';
 
 dotenv.config();
@@ -173,10 +189,30 @@ setInterval(() => {
     timestamp: Date.now()
   };
 
-  // Broadcast telemetry
+  // Generate dynamic market micro-shifts for connected terminals
+  const marketTickEvent = {
+    type: 'market_tick',
+    data: {
+      symbol: 'NIFTY 50',
+      price: Number((24850 + Math.sin(Date.now() / 8000) * 20).toFixed(2)),
+      change: Number((Math.sin(Date.now() / 10000) * 18).toFixed(2)),
+      changePercent: Number((Math.sin(Date.now() / 10000) * 0.08).toFixed(2)),
+      timestamp: Date.now(),
+    },
+    pulse: [
+      { symbol: 'NIFTY 50', changePct: (Math.sin(Date.now() / 10000) * 0.08).toFixed(2), price: (24850 + Math.sin(Date.now() / 8000) * 20).toFixed(2) },
+      { symbol: 'BANK NIFTY', changePct: (Math.cos(Date.now() / 9000) * 0.09).toFixed(2), price: (51920 + Math.cos(Date.now() / 7000) * 35).toFixed(2) },
+      { symbol: 'BRENT CRUDE', changePct: (1.2 + Math.sin(Date.now() / 15000) * 0.3).toFixed(2), price: (78.4 + Math.sin(Date.now() / 12000) * 0.5).toFixed(2) },
+      { symbol: 'USD/INR', changePct: (-0.05 + Math.cos(Date.now() / 20000) * 0.02).toFixed(2), price: (83.92 + Math.cos(Date.now() / 18000) * 0.03).toFixed(2) },
+    ],
+    timestamp: Date.now()
+  };
+
+  // Broadcast telemetry and market events
   activeClients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(dynamicTelemetry));
+      client.send(JSON.stringify(marketTickEvent));
     }
   });
 
@@ -1047,6 +1083,26 @@ app.get('/api/compare-embeddings', handleCompareEmbeddings);
 app.get('/api/compare-embeddings/hotspots', handleGetChangeHotspots);
 app.get('/api/compare-embeddings/hotspots/export', handleExportHotspotsCSV);
 app.get('/api/satellite-embedding/history', handleGetEmbeddingHistory);
+
+// ---------------------------------------------------------
+// TERRAWATCH FINANCIAL & MARKET INTELLIGENCE
+// ---------------------------------------------------------
+app.get('/api/market/pulse', handleGetMarketPulse);
+app.get('/api/market/instruments', handleGetInstruments);
+app.get('/api/market/quote/:symbol', handleGetQuote);
+app.get('/api/market/history/:symbol', handleGetHistory);
+app.get('/api/market/technicals/:symbol', handleGetTechnicalAnalysis);
+app.get('/api/market/forecast/:symbol', handleGetForecast);
+app.get('/api/market/transmissions', handleGetTransmissions);
+app.get('/api/market/regime', handleGetRegime);
+app.get('/api/market/scanner', handleGetScanner);
+app.get('/api/market/portfolio', handleGetPortfolio);
+app.post('/api/market/paper-order', handlePaperOrder);
+app.post('/api/market/orders', handlePaperOrder);
+app.post('/api/market/reset-portfolio', handleResetPortfolio);
+app.post('/api/market/portfolio/reset', handleResetPortfolio);
+app.get('/api/market/upstox/status', handleGetUpstoxStatus);
+app.post('/api/market/upstox/config', handleSetUpstoxConfig);
 
 
 // ---------------------------------------------------------

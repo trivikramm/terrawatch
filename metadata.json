@@ -1,6 +1,6 @@
 {
   "name": "TerraWatch AI",
-  "description": "Real-Time Climate & Seismic Intelligence Platform including interactive maps, advanced weather forecasts, severe storm tracking, and global earthquake analytics.",
+  "description": "Real-Time Climate, Seismic, Geospatial & Financial Market Intelligence Platform featuring event-to-market transmission modeling, probabilistic forecasting, Upstox gateway integration, and paper trading.",
   "requestFramePermissions": ["geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

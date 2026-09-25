@@ -77,7 +77,11 @@ const PRESET_STATIONS = [
   { name: 'Sahara Dune Boundary', lat: 22.1843, lon: 15.3421, desc: 'Ultra-arid expanding sand desert profile' }
 ];
 
-export default function SatelliteEmbeddingViewer() {
+interface SatelliteEmbeddingViewerProps {
+  theme?: 'light' | 'dark';
+}
+
+export default function SatelliteEmbeddingViewer({ theme = 'dark' }: SatelliteEmbeddingViewerProps = {}) {
   const [selectedStation, setSelectedStation] = useState(PRESET_STATIONS[0]);
   const [customLat, setCustomLat] = useState('13.0827');
   const [customLon, setCustomLon] = useState('80.2707');
@@ -275,7 +279,7 @@ export default function SatelliteEmbeddingViewer() {
       for (let i = 0; i < 64; i++) {
         const valA = reference.embedding[i] || 0;
         const valB = item.embedding[i] || 0;
-        sqSum += Math.pow(valA - valB, AppStatics.scaleOffset(i));
+        sqSum += Math.pow(Math.abs(valA - valB), AppStatics.scaleOffset(i));
       }
       const distance = Math.sqrt(sqSum);
       
@@ -355,7 +359,7 @@ export default function SatelliteEmbeddingViewer() {
       {/* LEFT COLUMN: Controls & Presets */}
       <div className="lg:col-span-4 space-y-5 flex flex-col">
         {/* Preset Selector */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 shadow-xl">
+        <div className="bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 rounded-2xl p-4.5 shadow-xl">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3.5 flex items-center gap-2">
             <Compass className="h-4 w-4 text-cyan-400" />
             Calibration Targets
@@ -368,7 +372,7 @@ export default function SatelliteEmbeddingViewer() {
                 className={`w-full text-left p-2.5 rounded-xl border text-xs transition-all cursor-pointer ${
                   selectedStation.name === preset.name
                     ? 'bg-cyan-950/40 border-cyan-500/50 text-cyan-200 font-bold'
-                    : 'bg-slate-950/60 border-slate-800/80 text-slate-400 hover:bg-slate-850/60 hover:text-slate-200'
+                    : 'bg-slate-50 dark:bg-[#090a0f]/60 border-slate-800/80 text-slate-400 hover:bg-slate-850/60 hover:text-slate-200'
                 }`}
               >
                 <div className="font-bold flex items-center justify-between">
@@ -384,7 +388,7 @@ export default function SatelliteEmbeddingViewer() {
         </div>
 
         {/* Custom Target Input */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 shadow-xl">
+        <div className="bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 rounded-2xl p-4.5 shadow-xl">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3.5 flex items-center gap-2">
             <MapPin className="h-4 w-4 text-cyan-400" />
             Geodetic Coordinates
@@ -397,7 +401,7 @@ export default function SatelliteEmbeddingViewer() {
                   type="text"
                   value={customLat}
                   onChange={(e) => setCustomLat(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-250 focus:border-cyan-550 focus:outline-none font-mono"
+                  className="w-full bg-white dark:bg-[#0e1017] border border-slate-200 dark:border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-slate-250 focus:border-cyan-550 focus:outline-none font-mono"
                   placeholder="e.g. 13.0827"
                 />
               </div>
@@ -407,7 +411,7 @@ export default function SatelliteEmbeddingViewer() {
                   type="text"
                   value={customLon}
                   onChange={(e) => setCustomLon(e.target.value)}
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-250 focus:border-cyan-550 focus:outline-none font-mono"
+                  className="w-full bg-white dark:bg-[#0e1017] border border-slate-200 dark:border-zinc-800 rounded-lg px-3 py-1.5 text-xs text-slate-250 focus:border-cyan-550 focus:outline-none font-mono"
                   placeholder="e.g. 80.2707"
                 />
               </div>
@@ -429,7 +433,7 @@ export default function SatelliteEmbeddingViewer() {
                     className={`p-1.5 rounded-lg text-xs font-bold select-none border transition-all cursor-pointer ${
                       selectedYear === year
                         ? 'bg-cyan-500 text-slate-950 border-cyan-400 font-extrabold'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:bg-slate-850 hover:text-slate-200'
+                        : 'bg-slate-50 dark:bg-[#090a0f] border-slate-800 text-slate-400 hover:bg-slate-850 hover:text-slate-200'
                     }`}
                   >
                     {year}
@@ -449,7 +453,7 @@ export default function SatelliteEmbeddingViewer() {
         </div>
 
         {/* Informative Help Guide */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 text-xs text-slate-400 space-y-2 flex-grow min-h-[140px]">
+        <div className="bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 rounded-2xl p-4.5 text-xs text-slate-400 space-y-2 flex-grow min-h-[140px]">
           <h4 className="font-bold text-slate-300 flex items-center gap-1.5">
             <Info className="h-4 w-4 text-cyan-405 shrink-0" />
             AlphaEarth Foundations Info
@@ -500,18 +504,18 @@ export default function SatelliteEmbeddingViewer() {
         {/* Map Container & 4 Indices split card */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {/* Leaflet Scan Map */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl flex flex-col h-[320px] md:h-auto min-h-[280px]">
-            <div className="p-3 border-b border-slate-800/60 flex items-center justify-between bg-slate-950/30">
+          <div className="bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 rounded-2xl overflow-hidden shadow-xl flex flex-col h-[320px] md:h-auto min-h-[280px]">
+            <div className="p-3 border-b border-slate-800/60 flex items-center justify-between bg-slate-50 dark:bg-[#090a0f]/30">
               <span className="text-xs font-bold text-slate-350 flex items-center gap-1.5">
                 <Compass className="h-3.5 w-3.5 text-cyan-405" />
                 Scan Envelope Spatial View
               </span>
-              <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-950 border border-slate-850 text-slate-400">
+              <span className="font-mono text-[10px] px-1.5 py-0.5 rounded bg-slate-50 dark:bg-[#090a0f] border border-slate-850 text-slate-400">
                 10m Resol.
               </span>
             </div>
             {/* Heatmap Layer Controls */}
-            <div className="p-2.5 bg-slate-950/40 border-b border-slate-800/40 flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-xs">
+            <div className="p-2.5 bg-slate-50 dark:bg-[#090a0f]/40 border-b border-slate-800/40 flex flex-wrap items-center justify-between gap-2 text-[10px] sm:text-xs">
               <label className="flex items-center gap-1.5 cursor-pointer select-none font-bold text-slate-350">
                 <input
                   type="checkbox"
@@ -522,7 +526,7 @@ export default function SatelliteEmbeddingViewer() {
                 Calibration Nodes Heatmap
               </label>
               {showHeatmap && (
-                <div className="flex items-center gap-0.5 bg-slate-950 p-0.5 rounded-lg border border-slate-850">
+                <div className="flex items-center gap-0.5 bg-slate-50 dark:bg-[#090a0f] p-0.5 rounded-lg border border-slate-850">
                   {(['forest', 'urban', 'water', 'barren'] as const).map((scale) => (
                     <button
                       key={scale}
@@ -541,7 +545,7 @@ export default function SatelliteEmbeddingViewer() {
             </div>
 
             {/* Map Element */}
-            <div ref={mapContainerRef} className="w-full flex-grow relative bg-slate-950" style={{ minHeight: '220px' }}>
+            <div ref={mapContainerRef} className="w-full flex-grow relative bg-slate-50 dark:bg-[#090a0f]" style={{ minHeight: '220px' }}>
               {showHeatmap && mapObject && (
                 <SatelliteEmbeddingHeatmap
                   embeddings={PRESET_STATIONS.map((st) => ({
@@ -558,7 +562,7 @@ export default function SatelliteEmbeddingViewer() {
           </div>
 
           {/* Core Categories Bar Chart */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 shadow-xl flex flex-col justify-between">
+          <div className="bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 rounded-2xl p-4.5 shadow-xl flex flex-col justify-between">
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
@@ -593,7 +597,7 @@ export default function SatelliteEmbeddingViewer() {
                       </span>
                       <span className="font-mono text-slate-200">{(ind.value * 100).toFixed(1)}%</span>
                     </div>
-                    <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-850">
+                    <div className="w-full bg-slate-50 dark:bg-[#090a0f] h-2 rounded-full overflow-hidden border border-slate-850">
                       <div className={`${ind.color} h-full rounded-full transition-all duration-500`} style={{ width: `${ind.value * 100}%` }} />
                     </div>
                     <p className="text-[9px] text-slate-550 font-medium italic">{ind.desc}</p>
@@ -607,7 +611,7 @@ export default function SatelliteEmbeddingViewer() {
         </div>
 
         {/* 64D Heatmap Grid */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 shadow-xl">
+        <div className="bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 rounded-2xl p-4.5 shadow-xl">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
@@ -619,7 +623,7 @@ export default function SatelliteEmbeddingViewer() {
               </p>
             </div>
             {embedding && (
-              <div className="text-right font-mono text-[10px] text-slate-400 bg-slate-950 px-2 py-0.5 rounded border border-slate-850">
+              <div className="text-right font-mono text-[10px] text-slate-400 bg-slate-50 dark:bg-[#090a0f] px-2 py-0.5 rounded border border-slate-850">
                 Vector Magnitude: {sumMagnitude.toFixed(4)}
               </div>
             )}
@@ -631,7 +635,7 @@ export default function SatelliteEmbeddingViewer() {
               <span className="text-xs font-bold text-slate-500">Analyzing GEE pixels...</span>
             </div>
           ) : embedding ? (
-            <div className="grid grid-cols-8 md:grid-cols-16 gap-[2px] bg-slate-950 p-2.5 rounded-xl border border-slate-850">
+            <div className="grid grid-cols-8 md:grid-cols-16 gap-[2px] bg-slate-50 dark:bg-[#090a0f] p-2.5 rounded-xl border border-slate-850">
               {embedding.embedding.map((val, idx) => {
                 // Color ramp: slate-900 (0) -> dark teal -> bright cyan (1)
                 const pct = Math.floor(val * 100);
@@ -643,7 +647,7 @@ export default function SatelliteEmbeddingViewer() {
                     style={{ backgroundColor: val > 0.08 ? colorString : '#0f172a' }}
                   >
                     {/* Tooltip on hover */}
-                    <div className="absolute hidden group-hover:block bottom-full left-1/2 transform -translate-x-1/2 mb-1.5 z-50 bg-slate-950 border border-slate-800 px-2 py-1 rounded text-[9px] font-mono whitespace-nowrap text-cyan-300 shadow-2xl">
+                    <div className="absolute hidden group-hover:block bottom-full left-1/2 transform -translate-x-1/2 mb-1.5 z-50 bg-white dark:bg-[#0e1017] border border-slate-200 dark:border-zinc-800 px-2 py-1 rounded text-[9px] font-mono whitespace-nowrap text-cyan-300 shadow-2xl">
                       Dim [{idx}]: {(val * 100).toFixed(1)}%
                     </div>
                   </div>
@@ -659,7 +663,7 @@ export default function SatelliteEmbeddingViewer() {
         <ChangeHotspotsWidget />
 
         {/* Change Over Time Trend Line Chart - Euclidean Divergence */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4.5 shadow-xl">
+        <div className="bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 rounded-2xl p-4.5 shadow-xl">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-cyan-400" />
             Euclidean Transition Divergence Timeline (Relative to 2018 Baseline)
@@ -694,7 +698,7 @@ export default function SatelliteEmbeddingViewer() {
               </div>
 
               {/* Sidebar metrics on the timeline */}
-              <div className="md:col-span-4 flex flex-col justify-center space-y-2.5 bg-slate-950 p-3 rounded-xl border border-slate-850 font-mono text-[10px]">
+              <div className="md:col-span-4 flex flex-col justify-center space-y-2.5 bg-slate-50 dark:bg-[#090a0f] p-3 rounded-xl border border-slate-850 font-mono text-[10px]">
                 <div className="font-sans font-bold text-[11px] text-slate-400 uppercase tracking-wide border-b border-slate-850 pb-1.5 flex items-center gap-1">
                   <History className="h-3.5 w-3.5 text-cyan-404" />
                   Horizon Analytics

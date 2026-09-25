@@ -445,13 +445,13 @@ export default function TsunamiSurveillance({ earthquakes, theme = 'dark' }: Tsu
   return (
     <div className="space-y-6">
       {/* 1. Header with Status Ribbon */}
-      <div className="bg-slate-950 border border-slate-900 rounded-2xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-xl">
+      <div className={}>
         <div className="flex items-center gap-3">
           <div className="p-2.5 bg-blue-500/10 rounded-xl border border-blue-500/20 text-blue-400">
             <Waves className="h-6 w-6 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-sm font-black uppercase text-slate-100 flex items-center gap-1.5 font-sans">
+            <h2 className="text-sm font-black uppercase {theme === "light" ? "text-slate-900" : "text-slate-100"} flex items-center gap-1.5 font-sans">
               Oceanic Tsunami Warnings & Surveillance Center
               {sirenActive && (
                 <span className="bg-red-500 text-xs text-white px-2.5 py-0.5 rounded-full font-black animate-pulse flex items-center gap-1">
@@ -517,7 +517,7 @@ export default function TsunamiSurveillance({ earthquakes, theme = 'dark' }: Tsu
               </div>
               <div className="h-8 w-px bg-slate-800 mx-2"></div>
               {muted ? (
-                <button onClick={() => setMuted(false)} className="p-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white rounded-xl">
+                <button onClick={() => setMuted(false)} className="p-2.5 bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 hover:border-slate-700 text-slate-400 hover:text-white rounded-xl">
                   <VolumeX className="h-4.5 w-4.5" />
                 </button>
               ) : (
@@ -640,7 +640,7 @@ export default function TsunamiSurveillance({ earthquakes, theme = 'dark' }: Tsu
         <div className="lg:col-span-4 flex flex-col gap-6">
           
           {/* Real-time Ticking graph of ocean water levels */}
-          <div className="bg-slate-950 border border-slate-900 rounded-2xl shadow-xl p-4 flex flex-col gap-4">
+          <div className="bg-white dark:bg-[#0e1017] border border-slate-200 dark:border-zinc-800 rounded-2xl shadow-xl p-4 flex flex-col gap-4">
             <div className="flex items-start justify-between">
               <div>
                 <span className="text-[9px] uppercase font-black text-blue-400 tracking-wider font-mono">Telemetry Anomaly Analysis</span>
@@ -649,7 +649,7 @@ export default function TsunamiSurveillance({ earthquakes, theme = 'dark' }: Tsu
                   Buoy {selectedBuoyId} Flow Tracker
                 </h3>
               </div>
-              <div className="px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-[10px] font-mono text-slate-400">
+              <div className="px-2 py-0.5 rounded bg-slate-50 dark:bg-[#151822] border border-slate-200 dark:border-zinc-800 text-[10px] font-mono text-slate-400">
                 100Hz Refresh Buffer
               </div>
             </div>
@@ -846,7 +846,7 @@ export default function TsunamiSurveillance({ earthquakes, theme = 'dark' }: Tsu
           </div>
 
           {/* Event log activity stack */}
-          <div className="bg-slate-950 border border-slate-900 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
+          <div className="bg-white dark:bg-[#0e1017] border border-slate-200 dark:border-zinc-800 rounded-2xl p-4 shadow-xl flex flex-col gap-2">
             <div className="flex items-center justify-between pb-1.5 border-b border-slate-900">
               <span className="text-[9px] uppercase font-black text-slate-500 tracking-wider">Surveillance Telemetry Stack</span>
               <button onClick={() => setLogs([])} className="text-[9px] font-bold text-slate-400 hover:text-white uppercase">Clear Logs</button>
